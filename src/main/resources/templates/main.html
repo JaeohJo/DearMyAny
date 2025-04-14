@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>DearMyAny</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom right, #f0f4ff, #e0e7ff);
+            font-family: 'Arial', sans-serif;
+        }
+
+        .card {
+            background-color: white;
+            padding: 40px 60px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .link-group {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .link {
+            font-size: 18px;
+            text-decoration: none;
+            color: #4a63f5;
+            border: 2px solid #4a63f5;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .link:hover {
+            background-color: #4a63f5;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="logo">DearMyAny</div>
+    <div class="link-group">
+        <a th:href="@{/register}" class="link">신규 가입</a>
+        <a th:href="@{/login}" class="link">로그인</a>
+    </div>
+</div>
+</body>
+</html>

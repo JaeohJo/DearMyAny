@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 40px;
+            background: #f0f4f8;
+        }
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            margin: auto;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        .email-container {
+            display: flex;
+            width: 100%;
+        }
+        #email {
+            flex: 0 0 78%;  /* 이메일 입력란이 80% */
+            padding-right: 10px;
+        }
+        #checkEmailBtn {
+            flex: 0 0 20%; /* 이메일 중복 확인 버튼이 20% */
+            padding: 8px;
+            background: #4a63f5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        button {
+            padding: 10px;
+            background: #4a63f5;
+            color: white;
+            border: none;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .check-result {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .valid {
+            color: green;
+        }
+        .invalid {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<form th:action="@{/register}" th:object="${memberDto}" method="post">
+    <h2>회원가입</h2>
+
+    <label>이름</label>
+    <input type="text" th:field="*{name}" required>
+
+    <label>전화번호</label>
+    <input type="text" th:field="*{phone}" required>
+
+    <label>이메일</label>
+    <div class="email-container">
+        <input type="email" th:field="*{email}" required id="email">
+        <button type="button" id="checkEmailBtn">중복 확인</button>
+    </div>
+    <p id="emailCheckResult" class="check-result"></p>
+
+    <label>비밀번호</label>
+    <input type="password" th:field="*{password}" required>
+
+    <label style="margin-top: 15px;">특수 인증키</label>
+    <input type="text" th:field="*{authKey}" required>
+
+    <!-- 여기에 간격 추가 -->
+    <div style="margin-top: 25px;"></div>
+
+    <button type="submit">가입하기</button>
+
+
+    <p th:text="${message}" style="margin-top:15px; color:green;"></p>
+</form>
+
+<script>
+    let isEmailChecked = false;
+
+    document.getElementById("checkEmailBtn").addEventListener("click", function () {
+        const email = document.getElementById("email").value;
+        if (email) {
+            // '@' 포함 여부 확인
+            if (!email.includes("@")) {
+                emailCheckResult.textContent = "이메일 형식을 확인해주세요.";
+                emailCheckResult.classList.remove("valid");
+                emailCheckResult.classList.add("invalid");
+                isEmailChecked = false;
+                return;
+            }
+
+            fetch('/check-email?email=' + email)
+                .then(response => response.json())
+                .then(data => {
+                    const emailCheckResult = document.getElementById("emailCheckResult");
+                    if (data) {
+                        emailCheckResult.textContent = "이미 사용 중인 이메일입니다.";
+                        emailCheckResult.classList.remove("valid");
+                        emailCheckResult.classList.add("invalid");
+                        isEmailChecked = false;
+                    } else {
+                        emailCheckResult.textContent = "사용 가능한 이메일입니다.";
+                        emailCheckResult.classList.remove("invalid");
+                        emailCheckResult.classList.add("valid");
+                        isEmailChecked = true;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking email:", error);
+                    alert("이메일 중복 확인 오류가 발생했습니다.");
+                    isEmailChecked = false;
+                });
+        } else {
+            alert("이메일을 입력해주세요.");
+            isEmailChecked = false;
+        }
+    });
+
+    document.querySelector("form").addEventListener("submit", function (event) {
+        if (!isEmailChecked) {
+            event.preventDefault(); // 가입 막기
+            alert("이메일 중복 확인을 해주세요.");
+            document.getElementById("checkEmailBtn").focus();
+        }
+    });
+</script>
+
+
+</body>
+</html>
