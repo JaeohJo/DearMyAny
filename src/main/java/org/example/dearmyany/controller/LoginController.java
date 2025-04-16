@@ -29,7 +29,7 @@ public class LoginController {
 
         if(result){
             model.addAttribute("message", "회원가입이 완료되었습니다!");
-            return "redirect:/main";
+            return "redirect:/login-page";
         }else{
             model.addAttribute("message", "회원가입에 실패하였습니다.");
             return "register";
@@ -42,21 +42,13 @@ public class LoginController {
         return loginService.duplicateCheck(email);
     }
 
-    @GetMapping("/login")
-    public String login(Model model) {
-
+    @GetMapping("/login-page")
+    public String login(Model model, @RequestParam(required = false) String error) {
         model.addAttribute("memberDto", new MemberDto());
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String tryLogin(@ModelAttribute MemberDto memberDto, Model model) {
-        Boolean result = loginService.doLogin(memberDto.getEmail(), memberDto.getPassword());
-        if(result){
-            return "redirect:/loginMain";
-        }else{
-            return "login";
+        if (error != null) {
+            model.addAttribute("errorMessage", "이메일과 비밀번호를 확인하세요.");
         }
+        return "login-page";
     }
 
     @GetMapping("/logout")

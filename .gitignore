@@ -1,24 +1,37 @@
-# Compiled class file
+# ========== Build & Gradle ==========
+/build/
+/.gradle/
+/out/
+/generated/
+/test-output/
+
+# ========== IntelliJ IDEA ==========
+.idea/
+*.iml
+*.iws
+
+# ========== Java ==========
 *.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
-*.nar
 *.ear
+*.nar
 *.zip
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# ========== Logs ==========
+*.log
 hs_err_pid*
 replay_pid*
+
+# ========== OS/Editor Specific ==========
+.DS_Store
+*.tmp
+*.swp
+
+# ========== Mobile Tools for Java ==========
+.mtj.tmp/
+
+# ========== BlueJ ==========
+*.ctxt

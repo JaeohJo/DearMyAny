@@ -1,5 +1,6 @@
 package org.example.dearmyany.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,10 +11,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor // 전체 필드 생성자
 @Builder            // builder 패턴
 public class MemberDto {
-    private String name;
-    private String phone;
-    private String email;
-    private String password;
-    private String authKey;
 
+    @NotNull
+    private String name;
+
+    @NotNull
+    private String phone;
+
+    @NotNull
+    private String email;
+
+    @NotNull
+    private String password;
+
+    @NotNull
+    private String authKey;
 }
