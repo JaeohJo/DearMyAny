@@ -39,7 +39,8 @@ public class SecurityConfig {
                                 "/check-email",
                                 "/register",
                                 "/css/**",
-                                "/js/**").permitAll()  // 로그인, 회원가입 페이지는 인증 없이 접근 가능
+                                "/js/**",
+                                "/api/auth-keys/generate").permitAll()  // 로그인, 회원가입 페이지는 인증 없이 접근 가능
                         .anyRequest().authenticated()  // 나머지 페이지는 인증 필요
                 )
                 .formLogin(form -> form

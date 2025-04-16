@@ -1,6 +1,7 @@
 package org.example.dearmyany.controller;
 
 import org.example.dearmyany.dto.MemberDto;
+import org.example.dearmyany.service.AuthKeyService;
 import org.example.dearmyany.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,8 +13,11 @@ public class LoginController {
 
     private LoginService loginService;
 
+    private AuthKeyService authKeyService;
+
     @Autowired
     LoginController(LoginService loginService) {
+
         this.loginService = loginService;
     }
 
@@ -25,9 +29,17 @@ public class LoginController {
 
     @PostMapping("/register")
     public String submitRegister(@ModelAttribute MemberDto memberDto, Model model) {
+        // 유효키 검증
+        /*boolean isValidKey = authKeyService.isValidKey(memberDto.getAuthKey());
+        if (!isValidKey) {
+            model.addAttribute("message", "유효하지 않은 인증키입니다.");
+            return "register"; // 회원가입 페이지로 다시 이동
+        }*/
+        // 회원가입
         Boolean result = loginService.register(memberDto);
-
         if(result){
+            // 유효키 사용처리
+            //authKeyService.markKeyAsUsed(memberDto.getAuthKey());
             model.addAttribute("message", "회원가입이 완료되었습니다!");
             return "redirect:/login-page";
         }else{

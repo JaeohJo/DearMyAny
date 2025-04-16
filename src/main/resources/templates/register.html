@@ -71,7 +71,24 @@
 <body>
 
 <form th:action="@{/register}" th:object="${memberDto}" method="post">
-    <h2>회원가입</h2>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <button type="button" onclick="location.href='/main'" style="
+        padding: 6px 12px;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        font-size: 26px;
+        width: 40px;
+        height: 40px;
+    ">←</button>
+
+        <h2 style="margin-left: 30px; text-align: center; flex-grow: 1;">회원가입</h2>
+
+        <!-- 오른쪽에 공간 확보 (뒤로가기 버튼 크기만큼) -->
+        <div style="width: 70px;"></div>
+    </div>
+
+
 
     <label>이름</label>
     <input type="text" th:field="*{name}" required>
@@ -91,6 +108,7 @@
 
     <label style="margin-top: 15px;">특수 인증키</label>
     <input type="text" th:field="*{authKey}" required>
+    <p th:text="${message}" style="margin-top:15px; color:red;"></p>
 
     <!-- 여기에 간격 추가 -->
     <div style="margin-top: 25px;"></div>

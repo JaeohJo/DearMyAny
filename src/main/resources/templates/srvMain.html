@@ -1,10 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Auth Key 생성</title>
+
+    <!-- CSRF 토큰 설정 -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background-color: #4a63f5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3a4fd5;
+        }
+
+        .message {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
+
+<div>
+    <button onclick="confirmAndGenerate()">인증키 생성</button>
+    <div id="result" class="message"></div>
+</div>
+
+<script>
+    function confirmAndGenerate() {
+        const confirmation = confirm("POST하시겠습니까?");
+        if (confirmation) {
+            generateAuthKeys();
+        } else {
+            document.getElementById("result").textContent = "POST 요청이 취소되었습니다.";
+        }
+    }
+
+    function generateAuthKeys() {
+        // CSRF 토큰과 헤더 이름 가져오기
+        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch('http://localhost:8080/api/auth-keys/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token // 동적으로 CSRF 헤더 적용
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById("result").textContent = "인증키 생성 성공!";
+                } else {
+                    document.getElementById("result").textContent = "요청 실패: " + response.status;
+                }
+            })
+            .catch(error => {
+                document.getElementById("result").textContent = "에러 발생: " + error;
+            });
+    }
+</script>
 
 </body>
 </html>
