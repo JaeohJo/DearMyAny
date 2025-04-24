@@ -2,84 +2,172 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Auth Key 생성</title>
-
-    <!-- CSRF 토큰 설정 -->
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-
+    <title>게시판</title>
     <style>
+        /* 스타일은 이전과 동일하게 유지 */
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: sans-serif;
-            background-color: #f0f4f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #ffffff;
         }
 
-        button {
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 15px 30px;
-            font-size: 16px;
-            background-color: #4a63f5;
+            background-color: #e0eafc;
+            border-bottom: 1px solid #ccc;
+        }
+        .top-bar .logo {
+            background-color: #5b9bd5;
+            color: white;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        .top-bar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .top-bar .welcome {
+            background-color: #5b9bd5;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        .top-bar button {
+            background-color: #5b9bd5;
             color: white;
             border: none;
-            border-radius: 8px;
+            padding: 10px 16px;
+            border-radius: 5px;
             cursor: pointer;
         }
 
-        button:hover {
-            background-color: #3a4fd5;
+        .container {
+            display: flex;
+            padding: 30px;
         }
 
-        .message {
+        .board {
+            flex: 3;
+            background-color: #e0eafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .row {
+            background-color: #f4f4f4;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+        }
+
+        .pagination-search {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-top: 20px;
-            text-align: center;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 10px;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 5px;
+        }
+
+        .search-bar input {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #aaa;
+        }
+
+        .search-bar button {
+            padding: 6px 12px;
+            background-color: #5b9bd5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .create-button {
+            margin-left: 30px;
+        }
+
+        .create-button button {
+            background-color: #5b9bd5;
+            color: white;
+            padding: 16px 30px;
+            border: none;
+            border-radius: 5px;
             font-size: 16px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<div>
-    <button onclick="confirmAndGenerate()">인증키 생성</button>
-    <div id="result" class="message"></div>
+<div class="top-bar">
+    <div class="logo">LOGO</div>
+    <div class="user-info">
+        <div class="welcome" th:text="${username} + '님 환영합니다'">홍길동님 환영합니다</div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">로그아웃</button>
+        </form>
+    </div>
 </div>
 
-<script>
-    function confirmAndGenerate() {
-        const confirmation = confirm("POST하시겠습니까?");
-        if (confirmation) {
-            generateAuthKeys();
-        } else {
-            document.getElementById("result").textContent = "POST 요청이 취소되었습니다.";
-        }
-    }
+<div class="container">
+    <div class="board">
+        <!-- 동적 게시글 목록 -->
+        <div th:if="${#lists.isEmpty(posts)}">
+            <p>아직 등록한 게시물이 없습니다.</p>
+        </div>
+        <div th:each="post : ${posts}" class="row" th:text="${post.title}">
+            게시글 제목
+        </div>
 
-    function generateAuthKeys() {
-        // CSRF 토큰과 헤더 이름 가져오기
-        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+        <!-- 페이지네이션 -->
+        <div class="pagination-search">
+            <div class="pagination" th:if="${totalPages != null}">
+                <a th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+                   th:href="@{/board(page=${pageNum})}"
+                   th:text="${pageNum}">1</a>
+            </div>
+            <div th:if="${totalPages == null}">
+                <p>페이지가 없습니다.</p>
+            </div>
+            <form class="search-bar" th:action="@{/board}" method="get">
+                <input type="text" name="keyword" placeholder="검색어 입력" th:value="${keyword}">
+                <button type="submit">검색</button>
+            </form>
+        </div>
+    </div>
 
-        fetch('http://localhost:8080/api/auth-keys/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                [header]: token // 동적으로 CSRF 헤더 적용
-            }
-        })
-            .then(response => {
-                if (response.ok) {
-                    document.getElementById("result").textContent = "인증키 생성 성공!";
-                } else {
-                    document.getElementById("result").textContent = "요청 실패: " + response.status;
-                }
-            })
-            .catch(error => {
-                document.getElementById("result").textContent = "에러 발생: " + error;
-            });
-    }
-</script>
+    <div class="create-button">
+        <a th:href="@{/board/new}">
+            <button>폼 만들기</button>
+        </a>
+    </div>
+</div>
 
 </body>
 </html>
