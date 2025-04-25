@@ -1,0 +1,8 @@
+CREATE TABLE post (
+    post_seq BIGINT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    writer_seq BIGINT NOT NULL, -- 외래 키처럼 쓰지만 참조는 없음
+    created_at DATETIME DEFAULT NULL,
+    updated_at DATETIME DEFAULT NULL,
+    PRIMARY KEY (post_seq)
+);
