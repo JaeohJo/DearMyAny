@@ -21,6 +21,21 @@
             max-width: 400px;
             width: 100%;
             box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            position: relative; /* 버튼 위치 조정 */
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+        }
+        h2 {
+            text-align: center;
+            margin: 0;
         }
         label {
             display: block;
@@ -35,7 +50,7 @@
             border-radius: 6px;
             border: 1px solid #ddd;
         }
-        button {
+        button[type="submit"] {
             padding: 12px;
             background: #4a63f5;
             color: white;
@@ -51,13 +66,29 @@
             color: red;
             font-size: 14px;
         }
-
     </style>
 </head>
 <body>
 
 <form th:action="@{/login}" method="post" th:object="${memberDto}">
-    <h2>로그인</h2>
+    <!-- 뒤로가기 버튼 -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <button type="button" onclick="location.href='/main'" style="
+        padding: 6px 12px;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        font-size: 26px;
+        width: 40px;
+        height: 40px;
+        border: none;
+    ">←</button>
+
+        <h2 style="margin-left: 30px; text-align: center; flex-grow: 1;">로그인</h2>
+
+        <!-- 오른쪽에 공간 확보 (뒤로가기 버튼 크기만큼) -->
+        <div style="width: 70px;"></div>
+    </div>
 
     <label>이메일</label>
     <input type="email" name="email" th:field="*{email}" required placeholder="이메일을 입력하세요">

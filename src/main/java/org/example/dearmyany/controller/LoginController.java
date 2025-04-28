@@ -24,7 +24,7 @@ public class LoginController {
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("memberDto", new MemberDto());
-        return "register";
+        return "login/register";
     }
 
     @PostMapping("/register")
@@ -33,7 +33,7 @@ public class LoginController {
         boolean isValidKey = authKeyService.isValidKey(memberDto.getAuthKey());
         if (!isValidKey) {
             model.addAttribute("message", "유효하지 않은 인증키입니다.");
-            return "register"; // 회원가입 페이지로 다시 이동
+            return "login/register"; // 회원가입 페이지로 다시 이동
         }
         // 회원가입
         Boolean result = loginService.register(memberDto);
@@ -44,7 +44,7 @@ public class LoginController {
             return "redirect:/login-page";
         }else{
             model.addAttribute("message", "회원가입에 실패하였습니다.");
-            return "register";
+            return "login/register";
         }
     }
 
@@ -60,11 +60,11 @@ public class LoginController {
         if (error != null) {
             model.addAttribute("errorMessage", "이메일과 비밀번호를 확인하세요.");
         }
-        return "login-page";
+        return "login/login-page";
     }
 
     @GetMapping("/logout")
     public String logout(){
-        return "main";
+        return "main/main";
     }
 }

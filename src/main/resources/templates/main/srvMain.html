@@ -55,12 +55,24 @@
             padding: 30px;
         }
 
-        .board {
+        .postBoard {
             flex: 3;
             background-color: #e0eafc;
             padding: 20px;
             border-radius: 8px;
             border: 1px solid #ccc;
+            height: 750px; /* 10개 정도 나올만한 높이로 고정 */
+            overflow-y: auto; /* 게시글이 넘 칠 경우만 스크롤 */
+            display: flex;
+            flex-direction: column;
+            position: relative; /* 검색바를 하단에 배치하기 위한 relative */
+        }
+
+        .rows-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
         }
 
         .row {
@@ -70,16 +82,27 @@
             border-radius: 5px;
         }
 
+        .empty-message {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #555;
+            font-size: 18px;
+        }
+
         .pagination-search {
             display: flex;
-            justify-content: space-between;
+            justify-content: center; /* 페이지네이션 중앙 정렬 */
             align-items: center;
             margin-top: 20px;
+            width: 100%;
         }
 
         .pagination {
             display: flex;
             gap: 10px;
+            justify-content: center;
         }
 
         .pagination a {
@@ -88,7 +111,25 @@
             color: #000;
         }
 
+        .create-button {
+            margin-left: 30px;
+        }
+
+        .create-button button {
+            background-color: #5b9bd5;
+            color: white;
+            padding: 16px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* 검색바 스타일: 게시판의 우측 하단 */
         .search-bar {
+            position: absolute;
+            bottom: 20px; /* 하단에서 20px 위로 위치 */
+            right: 20px; /* 우측에서 20px 떨어진 위치 */
             display: flex;
             gap: 5px;
         }
@@ -107,20 +148,6 @@
             border-radius: 4px;
             cursor: pointer;
         }
-
-        .create-button {
-            margin-left: 30px;
-        }
-
-        .create-button button {
-            background-color: #5b9bd5;
-            color: white;
-            padding: 16px 30px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -128,7 +155,7 @@
 <div class="top-bar">
     <div class="logo">LOGO</div>
     <div class="user-info">
-        <div class="welcome" th:text="${username} + '님 환영합니다'">홍길동님 환영합니다</div>
+        <div class="welcome" th:text="${username} + '님 환영합니다'"></div>
         <form th:action="@{/logout}" method="post">
             <button type="submit">로그아웃</button>
         </form>
@@ -136,26 +163,41 @@
 </div>
 
 <div class="container">
-    <div class="board">
-        <!-- 동적 게시글 목록 -->
-        <div th:if="${#lists.isEmpty(posts)}">
-            <p>아직 등록한 게시물이 없습니다.</p>
+    <div class="postBoard">
+        <!-- 게시글이 없을 경우 -->
+        <div th:if="${#lists.isEmpty(posts)}" class="empty-message">
+            아직 등록한 게시물이 없습니다.
         </div>
-        <div th:each="post : ${posts}" class="row" th:text="${post.title}">
-            게시글 제목
+
+        <!-- 게시글이 있는 경우 -->
+        <div th:if="${!#lists.isEmpty(posts)}">
+            <div class="rows-container">
+                <!-- 실제 게시글 출력 -->
+                <div th:each="post : ${posts}" class="row" th:text="${post.title}">
+                    게시글 제목
+                </div>
+
+                <!-- 부족한 공간만큼 빈 row 채우기 -->
+                <div th:if="${#lists.size(posts) < 10}"
+                     th:each="i : ${#numbers.sequence(1, 10 - #lists.size(posts))}"
+                     class="row" style="background-color: transparent; visibility: hidden;">
+                    빈칸
+                </div>
+            </div>
         </div>
 
         <!-- 페이지네이션 -->
         <div class="pagination-search">
-            <div class="pagination" th:if="${totalPages != null}">
+            <div class="pagination" th:if="${totalPages != null && totalPages > 0}">
                 <a th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
-                   th:href="@{/board(page=${pageNum})}"
+                   th:href="@{/post(page=${pageNum})}"
                    th:text="${pageNum}">1</a>
             </div>
             <div th:if="${totalPages == null}">
                 <p>페이지가 없습니다.</p>
             </div>
-            <form class="search-bar" th:action="@{/board}" method="get">
+            <!-- 검색바 -->
+            <form class="search-bar" th:action="@{/templates/post}" method="get">
                 <input type="text" name="keyword" placeholder="검색어 입력" th:value="${keyword}">
                 <button type="submit">검색</button>
             </form>
@@ -163,7 +205,7 @@
     </div>
 
     <div class="create-button">
-        <a th:href="@{/board/new}">
+        <a th:href="@{/post/createPostForm}">
             <button>폼 만들기</button>
         </a>
     </div>

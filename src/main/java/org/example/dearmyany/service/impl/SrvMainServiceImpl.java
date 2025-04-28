@@ -60,12 +60,4 @@ public class SrvMainServiceImpl implements SrvMainService {
                 .build();
         postRepository.save(post);
     }
-
-    // 게시글 조회 (ID로)
-    @Override
-    public PostDto getPostById(Long postSeq) {
-        Post post = postRepository.findById(postSeq)
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
-        return new PostDto(post.getPostSeq(), post.getTitle(), null, post.getCreatedAt());
-    }
 }

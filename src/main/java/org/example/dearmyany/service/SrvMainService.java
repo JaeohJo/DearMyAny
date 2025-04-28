@@ -15,6 +15,4 @@ public interface SrvMainService {
     // 게시글 생성
     void createPost(PostDto postDto);
 
-    // 게시글 조회 (ID로)
-    PostDto getPostById(Long postSeq);
 }
