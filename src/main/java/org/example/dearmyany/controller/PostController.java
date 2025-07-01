@@ -20,7 +20,7 @@ public class PostController {
     @GetMapping("/createPostForm")
     public String createPostForm(Model model) {
         model.addAttribute("post", new PostDto());
-        return "post/post-form";
+        return "post/createPost";
     }
 
     // 게시글 상세보기
@@ -29,6 +29,12 @@ public class PostController {
         PostDto postDto = postService.getPostById(postSeq);
         model.addAttribute("post", postDto);
         return "post/post-detail";
+    }
+
+    // 게시글 저장
+    @GetMapping("/save")
+    public String savePost(Model model) {
+        return "srvMain";
     }
 }
 

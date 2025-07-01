@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>DearMyAny</title>
+    <link rel="stylesheet" href="/css/post/createPost.css" />
+</head>
+<body>
+<header>
+    <h2>DearMyAny</h2>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Album</a>
+        <a href="#">Profile</a>
+    </nav>
+</header>
+
+<div class="main-wrapper">
+    <!-- 좌측 배너 -->
+    <div class="leftBanner" id="leftBanner">
+        <h2 id="leftBannerTitle">좌측 배너 사진</br>(300px * 550px)</h2>
+        <input type="file" id="leftPhotoInput" accept="image/*" style="margin-top: 10px; margin-left: 65px;" />
+    </div>
+
+    <!-- 기존 컨테이너 -->
+    <div class="container">
+        <div class="topBanner" id="topBanner">
+            <h1 id="topBannerTitle">상단 배너 사진(1032px * 310px)</h1>
+            <input type="file" id="topPhotoInput" accept="image/*" style="margin-top: 10px;" />
+        </div>
+
+        <form action="/post/save" method="post" id="form">
+            <div class="form-group">
+                <label for="name">이름</label>
+                <input type="text" id="name" name="name" placeholder="아기의 이름을 입력해주세요." required />
+            </div>
+
+            <div class="form-group">
+                <label for="content1">질문 1</label>
+                <input type="text" id="content1" name="content1" placeholder="내용을 입력해주세요." />
+            </div>
+
+            <div id="dynamicContents"></div>
+
+            <button type="button" id="addQuestionBtn">질문 추가</button>
+
+            <div class="form-actions" style="margin-top: 16px; height: 50px;">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 우측 배너 -->
+    <div class="rightBanner" id="rightBanner">
+        <h2 id="rightBannerTitle">우측 배너 사진</br>(300px * 550px)</h2>
+        <input type="file" id="rightPhotoInput" accept="image/*" style="margin-top: 10px; margin-left: 65px;" />
+    </div>
+</div>
+
+<script>
+    const maxQuestions = 4; // 내용2~5 최대 4개
+    let currentCount = 0;
+
+    const addBtn = document.getElementById('addQuestionBtn');
+    const dynamicContents = document.getElementById('dynamicContents');
+
+    addBtn.addEventListener('click', () => {
+        if (currentCount >= maxQuestions) {
+            alert('질문은 최대 4개까지 추가할 수 있습니다.');
+            return;
+        }
+        currentCount++;
+
+        const div = document.createElement('div');
+        div.className = 'form-group';
+        div.id = `contentGroup${currentCount}`;
+
+        const label = document.createElement('label');
+        label.htmlFor = `content${currentCount + 1}`;
+        label.textContent = `질문 ${currentCount + 1}`;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = `content${currentCount + 1}`;
+        input.name = `content${currentCount + 1}`;
+        input.placeholder = '내용을 입력해주세요.';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.innerHTML = '✕';
+        removeBtn.className = 'remove-btn';
+        removeBtn.addEventListener('click', () => {
+            dynamicContents.removeChild(div);
+            currentCount--;
+        });
+
+        div.appendChild(label);
+        div.appendChild(input);
+        div.appendChild(removeBtn);
+
+        dynamicContents.appendChild(div);
+    });
+
+</script>
+<script src="/js/post/createPost.js"></script>
+</body>
+</html>
